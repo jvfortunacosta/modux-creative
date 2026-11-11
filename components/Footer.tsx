@@ -13,12 +13,18 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-modux-black py-16 md:py-20">
-      <Container>
+    <footer className="relative overflow-hidden bg-modux-black py-16 md:py-20">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-[6vw] left-1/2 -translate-x-1/2 select-none whitespace-nowrap text-[18vw] font-black leading-none tracking-tight text-modux-canvas/[0.04]"
+      >
+        MODUX
+      </span>
+      <Container className="relative">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-6">
             <Logo variant="full" theme="canvas" className="w-[190px]" />
-            <p className="max-w-xs text-body text-modux-canvas/60">
+            <p className="max-w-xs font-mono text-xs uppercase tracking-[0.25em] text-modux-canvas/60">
               Make value visible.
             </p>
           </div>

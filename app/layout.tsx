@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import GrainOverlay from "@/components/ui/GrainOverlay";
 import "./globals.css";
 
 // Effra é a fonte oficial da marca. Sem licença Adobe Fonts disponível no
@@ -26,7 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={effraFallback.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <GrainOverlay />
+      </body>
     </html>
   );
 }

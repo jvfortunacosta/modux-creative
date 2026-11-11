@@ -1,6 +1,7 @@
+"use client";
+
+import { useState } from "react";
 import Container from "./ui/Container";
-import Eyebrow from "./ui/Eyebrow";
-import Reveal from "./ui/Reveal";
 
 const SERVICES = [
   {
@@ -30,42 +31,69 @@ const SERVICES = [
 ];
 
 export default function Services() {
-  return (
-    <section id="atuacao" className="bg-modux-canvas py-section md:py-section-lg">
-      <Container>
-        <Reveal>
-          <Eyebrow>Áreas de atuação</Eyebrow>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <h2 className="mt-4 max-w-2xl text-h2 text-modux-black text-balance">
-            O que a MODUX entrega.
-          </h2>
-        </Reveal>
+  const [active, setActive] = useState<number | null>(null);
 
-        <div className="mt-14 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-2 md:gap-6">
-          {SERVICES.map((service, i) => (
-            <Reveal key={service.number} delay={0.08 * i}>
-              <div className="relative overflow-hidden rounded-2xl border border-modux-graphite/15 bg-modux-graphite/5 p-8 md:p-10">
+  return (
+    <section id="atuacao" className="relative bg-modux-black py-section md:py-section-lg">
+      <Container>
+        <span className="font-mono text-sm uppercase tracking-[0.2em] text-modux-canvas/50">
+          Áreas de atuação
+        </span>
+      </Container>
+
+      <ul className="mt-10 border-t border-modux-canvas/15">
+        {SERVICES.map((service, i) => {
+          const isActive = active === i;
+          return (
+            <li key={service.number} className="border-b border-modux-canvas/15">
+              <button
+                type="button"
+                aria-expanded={isActive}
+                aria-controls={`service-panel-${service.number}`}
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive((a) => (a === i ? null : a))}
+                onFocus={() => setActive(i)}
+                onBlur={() => setActive((a) => (a === i ? null : a))}
+                className="group relative block w-full overflow-hidden px-6 py-8 text-left md:px-20"
+              >
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-2 -top-4 text-7xl font-extrabold text-modux-black/[0.06] md:text-8xl"
-                >
-                  {service.number}
+                  className={`absolute inset-0 origin-left bg-modux-lime transition-transform duration-500 ease-modux ${
+                    isActive ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+                <span className="relative flex items-baseline gap-6">
+                  <span
+                    className={`font-mono text-sm transition-colors duration-300 ${
+                      isActive ? "text-modux-black/60" : "text-modux-canvas/40"
+                    }`}
+                  >
+                    {service.number}
+                  </span>
+                  <span
+                    className={`text-h2 font-bold transition-colors duration-300 ${
+                      isActive ? "text-modux-black" : "text-modux-canvas"
+                    }`}
+                  >
+                    {service.title}
+                  </span>
                 </span>
-                <span className="text-eyebrow font-bold uppercase tracking-widest text-modux-graphite">
-                  {service.number}
-                </span>
-                <h3 className="mt-4 inline-block bg-[linear-gradient(transparent_88%,theme(colors.modux.lime)_88%)] bg-no-repeat pb-0.5 text-2xl font-extrabold text-modux-black">
-                  {service.title}
-                </h3>
-                <p className="mt-3 max-w-sm text-body text-modux-graphite">
-                  {service.description}
-                </p>
+              </button>
+              <div
+                id={`service-panel-${service.number}`}
+                className="grid transition-[grid-template-rows] duration-[400ms] ease-modux"
+                style={{ gridTemplateRows: isActive ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  <p className="max-w-xl px-6 pb-8 text-body text-modux-canvas/70 md:px-20">
+                    {service.description}
+                  </p>
+                </div>
               </div>
-            </Reveal>
-          ))}
-        </div>
-      </Container>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }

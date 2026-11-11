@@ -1,10 +1,11 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import Container from "./ui/Container";
 import Eyebrow from "./ui/Eyebrow";
 import PillButton from "./ui/PillButton";
-import KineticGrid from "./ui/KineticGrid";
+import ModuxGlassHero from "./hero/ModuxGlassHero";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -12,9 +13,17 @@ const fadeUp = {
 };
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
   return (
-    <KineticGrid className="min-h-[85vh] py-section md:min-h-screen md:py-section-lg">
-      <Container className="relative flex h-full items-center">
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen overflow-hidden bg-modux-black py-section md:py-section-lg"
+    >
+      <ModuxGlassHero sectionRef={sectionRef} titleRef={titleRef} />
+
+      <Container className="relative z-10 flex h-full items-center">
         <motion.div
           initial="hidden"
           animate="show"
@@ -48,6 +57,7 @@ export default function Hero() {
           </motion.div>
 
           <motion.h1
+            ref={titleRef}
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 text-h1 text-modux-canvas text-balance"
@@ -84,6 +94,6 @@ export default function Hero() {
           </motion.div>
         </motion.div>
       </Container>
-    </KineticGrid>
+    </section>
   );
 }

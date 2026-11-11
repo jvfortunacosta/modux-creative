@@ -34,6 +34,23 @@ body {
   border-radius: 2px;
 }
 
+/* Cursor customizado (CursorGlow) assume o lugar do cursor do sistema
+   apenas quando o ponteiro é fino (mouse) e o JS confirmou isso. */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+/* Zoom lento do frame de fundo no CTA de clímax (3.8) */
+@keyframes climax-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

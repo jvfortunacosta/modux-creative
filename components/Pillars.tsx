@@ -1,6 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Container from "./ui/Container";
-import Eyebrow from "./ui/Eyebrow";
-import Reveal from "./ui/Reveal";
 
 const PILLARS = [
   {
@@ -26,36 +27,75 @@ const PILLARS = [
 ];
 
 export default function Pillars() {
-  return (
-    <section id="pilares" className="bg-modux-canvas py-section md:py-section-lg">
-      <Container>
-        <Reveal>
-          <Eyebrow>Sobre a MODUX</Eyebrow>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <h2 className="mt-4 max-w-2xl text-h2 text-modux-black text-balance">
-            Uma marca para quem já entrega.
-          </h2>
-        </Reveal>
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-        <div className="mt-14 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-2 md:gap-6">
-          {PILLARS.map((pillar, i) => (
-            <Reveal key={pillar.word} delay={0.08 * i}>
-              <div className="h-full rounded-2xl border border-modux-graphite/15 bg-modux-graphite/5 p-8 md:p-10">
-                <span className="text-eyebrow font-bold uppercase tracking-widest text-modux-graphite">
-                  Pilar 0{i + 1}
-                </span>
-                <h3 className="mt-4 text-2xl font-extrabold uppercase tracking-tight text-modux-black">
-                  {pillar.word}
-                </h3>
-                <p className="mt-3 text-body text-modux-graphite">
-                  {pillar.description}
-                </p>
-              </div>
-            </Reveal>
-          ))}
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cancelled = false;
+    const triggers: { kill: () => void }[] = [];
+
+    import("@/lib/smooth-scroll").then(({ gsap, ScrollTrigger }) => {
+      if (cancelled) return;
+
+      cardRefs.current.forEach((card, i) => {
+        if (!card || i === PILLARS.length - 1) return;
+        const scrim = card.querySelector("[data-scrim]");
+        const inner = card.querySelector("[data-inner]");
+
+        const st = ScrollTrigger.create({
+          trigger: card,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => {
+            gsap.set(scrim, { opacity: self.progress * 0.55 });
+            gsap.set(inner, { scale: 1 - self.progress * 0.08 });
+          },
+        });
+        triggers.push(st);
+      });
+
+      ScrollTrigger.refresh();
+    });
+
+    return () => {
+      cancelled = true;
+      triggers.forEach((t) => t.kill());
+    };
+  }, []);
+
+  return (
+    <section id="pilares" className="relative bg-modux-canvas">
+      {PILLARS.map((pillar, i) => (
+        <div
+          key={pillar.word}
+          ref={(el) => {
+            cardRefs.current[i] = el;
+          }}
+          className="sticky top-20 flex h-[calc(100vh-5rem)] items-center overflow-hidden border-t border-modux-graphite/10 bg-modux-canvas md:top-24 md:h-[calc(100vh-6rem)]"
+          style={{ zIndex: i + 1 }}
+        >
+          <div data-inner className="w-full">
+            <Container>
+              <span className="font-mono text-sm uppercase tracking-[0.2em] text-modux-graphite">
+                Pilar 0{i + 1}
+              </span>
+              <h3 className="mt-4 text-[clamp(2.75rem,10vw,7.5rem)] font-bold leading-[0.95] tracking-tight text-modux-black">
+                {pillar.word}
+              </h3>
+              <p className="mt-6 max-w-xl text-body text-modux-graphite">
+                {pillar.description}
+              </p>
+            </Container>
+          </div>
+          <div
+            data-scrim
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-modux-black opacity-0"
+          />
         </div>
-      </Container>
+      ))}
     </section>
   );
 }

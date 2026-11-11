@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Container from "./ui/Container";
 import Logo from "./ui/Logo";
 import PillButton from "./ui/PillButton";
+import Magnetic from "./ui/Magnetic";
 
 const NAV_LINKS = [
   { href: "/#pilares", label: "Estúdio" },
@@ -17,13 +18,33 @@ const NAV_LINKS = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    let lastY = window.scrollY;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      if (!reducedMotion && !menuOpen) {
+        const delta = y - lastY;
+        if (y < 120) {
+          setHidden(false);
+        } else if (delta > 4) {
+          setHidden(true);
+        } else if (delta < -4) {
+          setHidden(false);
+        }
+      }
+      lastY = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [menuOpen]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -34,9 +55,9 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full bg-modux-canvas/95 backdrop-blur transition-shadow duration-300 ease-modux ${
+      className={`sticky top-0 z-50 w-full bg-modux-canvas/95 backdrop-blur transition-[transform,box-shadow] duration-300 ease-modux ${
         scrolled ? "shadow-[0_1px_0_0] shadow-modux-graphite/15" : ""
-      }`}
+      } ${hidden ? "-translate-y-full" : "translate-y-0"}`}
     >
       <Container className="flex h-20 items-center justify-between md:h-24">
         <span className="hidden md:block">
@@ -59,9 +80,11 @@ export default function Header() {
         </nav>
 
         <span className="hidden md:block">
-          <PillButton href="/#contato" variant="primary">
-            Fale com a MODUX
-          </PillButton>
+          <Magnetic>
+            <PillButton href="/#contato" variant="primary">
+              Fale com a MODUX
+            </PillButton>
+          </Magnetic>
         </span>
 
         <button
