@@ -117,12 +117,12 @@ export default function CasaMartinhoCasePage() {
           type: "pair",
           images: [
             {
-              src: "/cases/casa-martinho/vitrine/embalagem-paes.jpg",
-              alt: "Embalagem kraft da Casa Martinho entre pães frescos no balcão da padaria",
-            },
-            {
               src: "/cases/casa-martinho/vitrine/vitrine-fachada.jpg",
               alt: "Selo da Casa Martinho aplicado na vitrine de vidro da loja, com pães em exposição",
+            },
+            {
+              src: "/cases/casa-martinho/vitrine/embalagem-paes.jpg",
+              alt: "Embalagem kraft da Casa Martinho entre pães frescos no balcão da padaria",
             },
           ],
         },
